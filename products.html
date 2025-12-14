@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Watson Pools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a4d68 0%, #088395 30%, #05bfdb 70%, #00ffcb 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Animation (reused for consistency) */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent);
+            border-radius: 45%;
+            animation: wave-animation 15s infinite linear;
+        }
+
+        .wave:nth-child(1) {
+            bottom: -50%;
+            left: -50%;
+            animation-duration: 20s;
+            opacity: 0.3;
+        }
+
+        .wave:nth-child(2) {
+            bottom: -60%;
+            left: -40%;
+            animation-duration: 25s;
+            animation-delay: -5s;
+            opacity: 0.2;
+        }
+
+        @keyframes wave-animation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1200px;
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(5, 191, 219, 0.3);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #00ffcb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #00ffcb;
+        }
+
+        /* Products Section */
+        .products-container {
+            max-width: 900px;
+            margin: 8rem auto 4rem;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff 0%, #00ffcb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 203, 0.2);
+        }
+
+        /* Collapsible Categories */
+        .category-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 255, 203, 0.2);
+            border-color: rgba(0, 255, 203, 0.4);
+        }
+
+        .category-header {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            transition: background 0.3s ease;
+        }
+
+        .category-header:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .category-header h2 {
+            font-size: 1.4rem;
+            margin: 0;
+            color: #fff;
+        }
+
+        .toggle-icon {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00ffcb;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card.active .toggle-icon {
+            transform: rotate(45deg);
+        }
+
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .category-card.active .category-content {
+            max-height: 1000px;
+            /* Arbitrary large height for animation */
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .product-list {
+            padding: 1rem 2rem 2rem;
+        }
+
+        .product-item {
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-item h3 {
+            color: #00ffcb;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .product-item p {
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .product-item {
+                flex-direction: column;
+            }
+
+            .product-img {
+                width: 100%;
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            /* Simplified for mobile for this example */
+            .page-title {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">Watson</div>
+        <ul class="nav-links">
+            <li><a href="watson.html">Home</a></li>
+            <li><a href="watson.html#features">Features</a></li>
+            <li><a href="watson.html#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="products-container">
+        <h1 class="page-title">Our Products</h1>
+
+        <!-- Category 1 -->
+        <div class="category-card">
+            <div class="category-header">
+                <h2>Pool Chemicals</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="category-content">
+                <div class="product-list">
+                    <div class="product-item">
+                        <img src="product/category1/p1.jpg" alt="Chlorine Tabs" class="product-img">
+                        <div class="product-details">
+                            <h3>Crystal Clear Chlorine Tabs</h3>
+                            <p>Premium 3-inch slow-dissolving tablets designed to keep your pool sanitized and sparkling
+                                clean for longer periods. Stabilized to protect against sunlight degradation.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category1/p2.jpg" alt="Algae Defense" class="product-img">
+                        <div class="product-details">
+                            <h3>Algae Defense Pro</h3>
+                            <p>Fast-acting algaecide that prevents and eliminates green, black, and mustard algae blooms
+                                without foaming. Safe for swimmers immediately after use.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category1/p3.jpg" alt="pH Balancer" class="product-img">
+                        <div class="product-details">
+                            <h3>pH Balancer Plus</h3>
+                            <p>Granular formula to safely increase pH levels, protecting your equipment from corrosion
+                                and improving swimmer comfort by reducing eye irritation.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category1/p4.jpg" alt="Shock Treatment" class="product-img">
+                        <div class="product-details">
+                            <h3>Super Shock Treatment</h3>
+                            <p>Powerful oxidizing shock that destroys organic contaminants and restores water clarity
+                                overnight. Essential for weekly maintenance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 2 -->
+        <div class="category-card">
+            <div class="category-header">
+                <h2>Maintenance Equipment</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="category-content">
+                <div class="product-list">
+                    <div class="product-item">
+                        <img src="product/category2/p1.jpg" alt="Robotic Cleaner" class="product-img">
+                        <div class="product-details">
+                            <h3>Robotic Pool Cleaner X1</h3>
+                            <p>Autonomous cleaner with smart navigation that scrubs floors, walls, and the waterline for
+                                a complete clean. Energy efficient and easy to empty.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category2/p2.jpg" alt="Skimmer Net" class="product-img">
+                        <div class="product-details">
+                            <h3>Heavy-Duty Skimmer Net</h3>
+                            <p>Reinforced aluminum frame with deep mesh bag for easily removing leaves and debris from
+                                the pool surface. Fits standard telescopic poles.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category2/p3.jpg" alt="Pool Brush" class="product-img">
+                        <div class="product-details">
+                            <h3>18" Wall Brush</h3>
+                            <p>Curved design with durable nylon bristles to easily clean corners and steps. Safe for all
+                                pool surfaces including vinyl and tile.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category2/p4.jpg" alt="Vacuum Head" class="product-img">
+                        <div class="product-details">
+                            <h3>Weighted Vacuum Head</h3>
+                            <p>Flexible body with weighted design ensures the vacuum stays submerged and hugs the pool
+                                floor for efficient debris removal.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 3 -->
+        <div class="category-card">
+            <div class="category-header">
+                <h2>Pumps & Filters</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="category-content">
+                <div class="product-list">
+                    <div class="product-item">
+                        <img src="product/category3/p1.png" alt="Variable Speed Pump" class="product-img">
+                        <div class="product-details">
+                            <h3>EcoFlow Variable Speed Pump</h3>
+                            <p>Save up to 80% on energy costs with this quiet, high-efficiency pump. Features
+                                programmable scheduling and digital interface.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category3/p2.jpg" alt="Sand Filter" class="product-img">
+                        <div class="product-details">
+                            <h3>ProSeries Sand Filter</h3>
+                            <p>Durable, corrosion-proof filter tank providing superior flow rates and crystal clear
+                                water. Easy-to-use multi-port valve.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category3/p3.jpg" alt="Pool Heater" class="product-img">
+                        <div class="product-details">
+                            <h3>Rapid Heat Gas Heater</h3>
+                            <p>Extend your swimming season with our high-performance heater. Low NOx emissions and
+                                cupro-nickel heat exchanger for durability.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category3/p4.jpg" alt="Salt System" class="product-img">
+                        <div class="product-details">
+                            <h3>Salt Water Chlorinator</h3>
+                            <p>Automatically converts salt into chlorine for softer, silkier water that won't irritate
+                                eyes or skin. Eliminates the need for handling harsh chemicals.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 4 -->
+        <div class="category-card">
+            <div class="category-header">
+                <h2>Accessories & Fun</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="category-content">
+                <div class="product-list">
+                    <div class="product-item">
+                        <img src="product/category4/p1.jpg" alt="LED Lights" class="product-img">
+                        <div class="product-details">
+                            <h3>ColorLogic LED Lights</h3>
+                            <p>Transform your pool environment with vibrant color-changing LED lights. Energy efficient
+                                and long-lasting performance.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category4/p2.jpg" alt="Pool Cover" class="product-img">
+                        <div class="product-details">
+                            <h3>Solar Pool Cover</h3>
+                            <p>Retain heat and reduce evaporation with this heavy-duty solar blanket. Raises water
+                                temperature by up to 15 degrees.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category4/p3.jpg" alt="Lounger" class="product-img">
+                        <div class="product-details">
+                            <h3>Luxury Floating Lounger</h3>
+                            <p>Ergonomic design with cup holders and soft fabric cover. The ultimate way to relax and
+                                soak up the sun in your pool.</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="product/category4/p4.jpg" alt="Volleyball Set" class="product-img">
+                        <div class="product-details">
+                            <h3>Poolside Volleyball Set</h3>
+                            <p>Complete set including stands, net, and ball. sturdy bases can be filled with water or
+                                sand for stability during intense games.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Accordion Functionality
+        document.querySelectorAll('.category-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const card = header.parentElement;
+                card.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

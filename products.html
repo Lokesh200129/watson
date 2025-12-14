@@ -20,7 +20,7 @@
             overflow-x: hidden;
         }
 
-        /* Background Animation (reused for consistency) */
+        /* Background Animation */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -112,7 +112,7 @@
 
         /* Products Section */
         .products-container {
-            max-width: 900px;
+            max-width: 1400px;
             margin: 8rem auto 4rem;
             padding: 0 20px;
             position: relative;
@@ -127,71 +127,154 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 30px rgba(0, 255, 203, 0.2);
+            animation: fadeInDown 0.8s ease-out;
         }
 
-        /* Collapsible Categories */
-        .category-card {
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Two Column Layout */
+        .products-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        /* Left Sidebar - Categories */
+        .categories-sidebar {
+            position: sticky;
+            top: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .category-tab {
             background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(20px);
             border-radius: 15px;
-            margin-bottom: 1.5rem;
             border: 1px solid rgba(255, 255, 255, 0.25);
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .category-card:hover {
-            box-shadow: 0 8px 25px rgba(0, 255, 203, 0.2);
-            border-color: rgba(0, 255, 203, 0.4);
-        }
-
-        .category-header {
-            padding: 1.5rem 2rem;
+            padding: 1.2rem 1.5rem;
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            transition: background 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInLeft 0.6s ease-out backwards;
         }
 
-        .category-header:hover {
-            background: rgba(255, 255, 255, 0.15);
+        .category-tab:nth-child(1) { animation-delay: 0.1s; }
+        .category-tab:nth-child(2) { animation-delay: 0.2s; }
+        .category-tab:nth-child(3) { animation-delay: 0.3s; }
+        .category-tab:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
-        .category-header h2 {
-            font-size: 1.4rem;
+        .category-tab::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(135deg, #00ffcb 0%, #088395 100%);
+            transform: scaleY(0);
+            transition: transform 0.4s ease;
+        }
+
+        .category-tab:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(0, 255, 203, 0.4);
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(0, 255, 203, 0.2);
+        }
+
+        .category-tab.active {
+            background: rgba(0, 255, 203, 0.15);
+            border-color: #00ffcb;
+            transform: translateX(8px);
+            box-shadow: 0 8px 30px rgba(0, 255, 203, 0.3);
+        }
+
+        .category-tab.active::before {
+            transform: scaleY(1);
+        }
+
+        .category-tab h2 {
+            font-size: 1.1rem;
             margin: 0;
             color: #fff;
+            transition: color 0.3s ease;
         }
 
-        .toggle-icon {
-            font-size: 1.5rem;
-            font-weight: bold;
+        .category-tab.active h2 {
             color: #00ffcb;
-            transition: transform 0.3s ease;
         }
 
-        .category-card.active .toggle-icon {
-            transform: rotate(45deg);
+        /* Right Content - Products Display */
+        .products-display {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 2.5rem;
+            min-height: 600px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-out;
         }
 
-        .category-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .category-card.active .category-content {
-            max-height: 1000px;
-            /* Arbitrary large height for animation */
-            transition: max-height 0.5s ease-in-out;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         .product-list {
-            padding: 1rem 2rem 2rem;
+            display: none;
+        }
+
+        .product-list.active {
+            display: block;
+            animation: slideInRight 0.6s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .category-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #00ffcb;
+            border-bottom: 2px solid rgba(0, 255, 203, 0.3);
+            padding-bottom: 1rem;
         }
 
         .product-item {
@@ -200,10 +283,33 @@
             display: flex;
             gap: 2rem;
             align-items: flex-start;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .product-item:nth-child(2) { animation-delay: 0.1s; }
+        .product-item:nth-child(3) { animation-delay: 0.2s; }
+        .product-item:nth-child(4) { animation-delay: 0.3s; }
+        .product-item:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .product-item:last-child {
             border-bottom: none;
+        }
+
+        .product-item:hover {
+            transform: translateX(10px);
+            transition: transform 0.3s ease;
         }
 
         .product-img {
@@ -213,6 +319,12 @@
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .product-item:hover .product-img {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 10px 30px rgba(0, 255, 203, 0.3);
         }
 
         .product-details {
@@ -231,14 +343,22 @@
             font-size: 1rem;
         }
 
-        @media (max-width: 600px) {
-            .product-item {
-                flex-direction: column;
+        @media (max-width: 1024px) {
+            .products-layout {
+                grid-template-columns: 1fr;
             }
 
-            .product-img {
-                width: 100%;
-                height: 200px;
+            .categories-sidebar {
+                position: relative;
+                top: 0;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .category-tab:hover,
+            .category-tab.active {
+                transform: translateY(-4px);
             }
         }
 
@@ -247,9 +367,27 @@
                 display: none;
             }
 
-            /* Simplified for mobile for this example */
             .page-title {
                 font-size: 2.2rem;
+            }
+
+            .categories-sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .products-display {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .product-item {
+                flex-direction: column;
+            }
+
+            .product-img {
+                width: 100%;
+                height: 200px;
             }
         }
     </style>
@@ -276,14 +414,28 @@
     <div class="products-container">
         <h1 class="page-title">Our Products</h1>
 
-        <!-- Category 1 -->
-        <div class="category-card">
-            <div class="category-header">
-                <h2>Pool Chemicals</h2>
-                <span class="toggle-icon">+</span>
+        <div class="products-layout">
+            <!-- Left Sidebar - Category Tabs -->
+            <div class="categories-sidebar">
+                <div class="category-tab active" data-category="category1">
+                    <h2>Pool Chemicals</h2>
+                </div>
+                <div class="category-tab" data-category="category2">
+                    <h2>Maintenance Equipment</h2>
+                </div>
+                <div class="category-tab" data-category="category3">
+                    <h2>Pumps & Filters</h2>
+                </div>
+                <div class="category-tab" data-category="category4">
+                    <h2>Accessories & Fun</h2>
+                </div>
             </div>
-            <div class="category-content">
-                <div class="product-list">
+
+            <!-- Right Content - Products Display -->
+            <div class="products-display">
+                <!-- Category 1 - Pool Chemicals -->
+                <div class="product-list active" id="category1">
+                    <h2 class="category-title">Pool Chemicals</h2>
                     <div class="product-item">
                         <img src="product/category1/p1.jpg" alt="Chlorine Tabs" class="product-img">
                         <div class="product-details">
@@ -317,17 +469,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Category 2 -->
-        <div class="category-card">
-            <div class="category-header">
-                <h2>Maintenance Equipment</h2>
-                <span class="toggle-icon">+</span>
-            </div>
-            <div class="category-content">
-                <div class="product-list">
+                <!-- Category 2 - Maintenance Equipment -->
+                <div class="product-list" id="category2">
+                    <h2 class="category-title">Maintenance Equipment</h2>
                     <div class="product-item">
                         <img src="product/category2/p1.jpg" alt="Robotic Cleaner" class="product-img">
                         <div class="product-details">
@@ -361,17 +506,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Category 3 -->
-        <div class="category-card">
-            <div class="category-header">
-                <h2>Pumps & Filters</h2>
-                <span class="toggle-icon">+</span>
-            </div>
-            <div class="category-content">
-                <div class="product-list">
+                <!-- Category 3 - Pumps & Filters -->
+                <div class="product-list" id="category3">
+                    <h2 class="category-title">Pumps & Filters</h2>
                     <div class="product-item">
                         <img src="product/category3/p1.png" alt="Variable Speed Pump" class="product-img">
                         <div class="product-details">
@@ -405,17 +543,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Category 4 -->
-        <div class="category-card">
-            <div class="category-header">
-                <h2>Accessories & Fun</h2>
-                <span class="toggle-icon">+</span>
-            </div>
-            <div class="category-content">
-                <div class="product-list">
+                <!-- Category 4 - Accessories & Fun -->
+                <div class="product-list" id="category4">
+                    <h2 class="category-title">Accessories & Fun</h2>
                     <div class="product-item">
                         <img src="product/category4/p1.jpg" alt="LED Lights" class="product-img">
                         <div class="product-details">
@@ -451,15 +582,28 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <script>
-        // Accordion Functionality
-        document.querySelectorAll('.category-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const card = header.parentElement;
-                card.classList.toggle('active');
+        // Category Tab Functionality
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        const productLists = document.querySelectorAll('.product-list');
+
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const categoryId = tab.getAttribute('data-category');
+
+                // Remove active class from all tabs
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+
+                // Hide all product lists
+                productLists.forEach(list => list.classList.remove('active'));
+                
+                // Show selected product list
+                document.getElementById(categoryId).classList.add('active');
             });
         });
     </script>
